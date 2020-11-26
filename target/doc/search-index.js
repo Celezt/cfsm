@@ -1,0 +1,4 @@
+var searchIndex = JSON.parse('{\
+"cfsm":{"doc":"CFSM`cfsm`, also called Celezt\'s Finite State Machine is a…","i":[[3,"FSM","cfsm","Finite State Machine using fn-pointer",null,null],[11,"get","","",0,[[],["option",4]]],[11,"update","","",0,[[]]],[11,"new","","",0,[[],["fsm",3]]],[11,"transition","","",0,[[],["fsm",3]]],[11,"from","","",0,[[]]],[11,"into","","",0,[[]]],[11,"to_owned","","",0,[[]]],[11,"clone_into","","",0,[[]]],[11,"borrow","","",0,[[]]],[11,"borrow_mut","","",0,[[]]],[11,"try_from","","",0,[[],["result",4]]],[11,"try_into","","",0,[[],["result",4]]],[11,"type_id","","",0,[[],["typeid",3]]],[11,"clone","","",0,[[]]],[11,"clone_from","","",0,[[]]],[11,"deref","","",0,[[]]]],"p":[[3,"FSM"]]}\
+}');
+addSearchOptions(searchIndex);initSearch(searchIndex);
