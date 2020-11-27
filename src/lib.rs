@@ -43,7 +43,7 @@ type State<T> = fn(&mut T) -> FSM<T>;
 /// fn test_fsm() {  
 ///     // Initialize
 ///     // state is fn a(...) -> ...
-///     let mut state = FSM::new(ExampleMachine::a, ExampleMachine);
+///     let mut state = FSM::new(ExampleMachine::a, &ExampleMachine);
 ///     
 ///     // state is now fn b(...) -> ...
 ///     state.update();
@@ -53,7 +53,7 @@ type State<T> = fn(&mut T) -> FSM<T>;
 ///     
 ///     // it is possible to overwrite with a new struct and fn pointer
 ///     // state is fn a(...) -> ...
-///     state = FSM::new(ExampleMachine::a, ExampleMachine);
+///     state = FSM::new(ExampleMachine::a, &ExampleMachine);
 ///     
 ///     // state is now fn b(...) -> ...
 ///     state.update();
@@ -79,12 +79,11 @@ impl<T> FSM<T>
 where
     T: Copy + Clone,
 {
-    pub fn get(&self) -> Option<State<T>> {
-        match self.state_type {
-            Some(_) => Some(self.state),
-            None => None,
-        }
+    /// Return state.
+    pub fn get(&self) -> State<T> {
+        self.state
     }
+    /// transition one step.
     pub fn update(&mut self) {
         // If machine exist
         if self.state_type.is_some() {
@@ -93,12 +92,14 @@ where
             panic!("FSM was None");
         }
     }
-    pub fn new(func: State<T>, state_type: T) -> FSM<T> {
+    /// Initialize FSM.
+    pub fn new(func: State<T>, state_type: &T) -> FSM<T> {
         FSM {
-            state_type: Some(state_type),
+            state_type: Some(*state_type),
             state: func,
         }
     }
+    /// Move to new state.
     pub fn transition(func: State<T>) -> FSM<T> {
         FSM {
             state_type: None,
@@ -135,9 +136,10 @@ where
     }
 }
 
-/* #[cfg(test)]
+#[cfg(test)]
 mod tests {
-    use crate::lib::*;
+    use super::*;
+
     #[derive(Debug, Copy, Clone)]
     struct TestState;
 
@@ -160,17 +162,13 @@ mod tests {
     #[test]
     fn test_fsm() {
         // Initialize
-        let mut state = FSM::new(TestState::a, TestState);
+        let mut state = FSM::new(TestState::a, &TestState);
 
-        assert_eq!(
-            utilities::type_of(state),
-            "fsm_game::fsm_handler::FSM<fsm_game::fsm_handler::tests::TestState>"
-        );
         for _ in 0..20 {
             state.update();
         }
 
-        state = FSM::new(TestState::a, TestState);
+        state = FSM::new(TestState::a, &TestState);
         state.update();
     }
-} */
+}
