@@ -4,4 +4,8 @@ version = "1.0.0"
 authors = ["Celezt <celezt@github.com>"]
 edition = "2018"
 
+[[test]]
+name = "tests"
+path = "tests/test_fsm.rs"
+
 [dependencies]
