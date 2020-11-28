@@ -20,7 +20,7 @@ type State<T> = fn(&mut T) -> FSM<T>;
 /// use cfsm::FSM;
 ///
 /// // Machine
-/// #[derive(Debug, Copy, Clone)]
+/// #[derive(Copy, Clone)]
 /// struct ExampleMachine{
 ///     x: i32,
 /// }
@@ -55,13 +55,21 @@ type State<T> = fn(&mut T) -> FSM<T>;
 ///     //state is now fn c(...) -> ...
 ///     state.update();
 ///
+///     println!("Expose: {}", state.get().x);
+///
+///     state.get_mut().x = 0;
+///
+///     println!("Expose: {}", state.get().x);
+///
 ///     // output:
 ///     // A: 1
 ///     // B: 2
 ///     // C: 3
+///     // Expose: 3
+///     // Expose: 0
 /// }
 /// ```
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 pub struct FSM<T>
 where
     T: Copy + Clone,
@@ -74,17 +82,26 @@ impl<T> FSM<T>
 where
     T: Copy + Clone,
 {
+    /// Expose machine fields.
+    pub fn get(&self) -> &T {
+        &self.machine
+    }
+    /// Expose mutable machine fields.
+    pub fn get_mut(&mut self) -> &mut T {
+        &mut self.machine
+    }
     /// transition one step.
     pub fn update(&mut self) {
+        // returned fsm from the function pointed at
         let fsm = self(&mut self.machine);
         self.state = fsm.state;
         self.machine = fsm.machine;
     }
     /// Move to new state.
-    pub fn transition(machine: T, func: State<T>) -> FSM<T> {
+    pub fn transition(machine: T, state: State<T>) -> FSM<T> {
         FSM {
             machine: machine,
-            state: func,
+            state: state,
         }
     }
 }
@@ -95,21 +112,8 @@ where
 {
     type Target = State<T>;
 
+    // Deref to be able to access the data from the smart pointer
     fn deref(&self) -> &Self::Target {
         &self.state
-    }
-}
-
-impl<T> Clone for FSM<T>
-where
-    T: Copy + Clone,
-{
-    fn clone(&self) -> Self {
-        *self
-    }
-
-    fn clone_from(&mut self, source: &Self) {
-        self.state = source.state;
-        self.machine = source.machine;
     }
 }

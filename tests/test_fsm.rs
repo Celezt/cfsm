@@ -34,5 +34,13 @@ mod tests {
         for _ in 0..20 {
             state.update();
         }
+
+        println!("Expose: {}", state.get().x);
+
+        state.get_mut().x = 0;
+
+        println!("Expose: {}", state.get().x);
+
+        state.update();
     }
 }
